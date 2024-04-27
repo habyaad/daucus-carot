@@ -5,20 +5,18 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentModule } from './student/student.module';
 import { ParentModule } from './parent/parent.module';
+import { ConfigModule } from '@nestjs/config';
+import { dbConfigOption } from './config/db-config.config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    password: '996374',
-    username: 'postgres',
-    entities: [],
-    database: 'daucus_carot',
-    synchronize: true,
-    logging: true,
-  }), AuthModule, StudentModule, ParentModule],
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(dbConfigOption),
+    AuthModule,
+    StudentModule,
+    ParentModule,
+  ],
   controllers: [AppController],
-  providers: [AppService,],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
