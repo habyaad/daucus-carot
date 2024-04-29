@@ -3,26 +3,19 @@ import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parent } from './entities/parent.entity';
-import { Repository } from 'typeorm';
+import { ParentRepository } from './parent.repository';
+import { LoginDto } from 'src/auth/dto/login-data.dto';
+import { JwtPayloadDto } from 'src/auth/dto/payload.dto';
 
 @Injectable()
 export class ParentService {
   constructor(
-    @InjectRepository(Parent) private readonly parentRepository: Repository<Parent>,
+    @InjectRepository(ParentRepository)
+    private readonly parentRepository: ParentRepository,
   ) {}
-  create(createParentDto: CreateParentDto) {
-    try{
-    const parent: Parent = new Parent();
-    parent.firstName = createParentDto.firstName;
-    parent.email = createParentDto.email;
-    parent.password = createParentDto.password;
-    return this.parentRepository.save(parent);  
-    }catch(e){
-      throw e;
-    }
-  }
-  findAll() {
-    return `This action returns all parent`;
+  
+  async findAll() {
+    return await this.parentRepository.find();
   }
 
   findOne(id: number) {
