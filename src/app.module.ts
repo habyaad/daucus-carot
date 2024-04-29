@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentModule } from './student/student.module';
 import { ParentModule } from './parent/parent.module';
 import { ConfigModule } from '@nestjs/config';
-import { dbConfigOption } from './config/db-config.config';
+import { dbConfigOption } from './config/dbConfig.config';
 
 @Module({
   imports: [
