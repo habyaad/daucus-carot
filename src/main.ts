@@ -1,12 +1,14 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const logger = new Logger("Bootstrap");
+  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT_NO || 3005
+  app.setGlobalPrefix('api');
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  const port = process.env.PORT_NO || 3005;
   await app.listen(port);
-  logger.log(`Backend app listening on port: ${port}`)
+  logger.log(`Backend app listening on port: ${port}`);
 }
 bootstrap();
