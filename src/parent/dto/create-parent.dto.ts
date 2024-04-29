@@ -1,13 +1,14 @@
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsPhoneNumber,
   IsString,
   IsStrongPassword,
-  Length,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { UserType } from 'src/common/enums';
 
 export class CreateParentDto {
   @IsString()
@@ -29,6 +30,10 @@ export class CreateParentDto {
   @IsNotEmpty()
   @IsPhoneNumber("NG")
   phoneNumber: string;
+
+  @IsNotEmpty()
+  @IsEnum(UserType)
+  userType: UserType;
 
   @IsNotEmpty()
   @IsStrongPassword()

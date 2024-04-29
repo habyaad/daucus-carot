@@ -1,22 +1,8 @@
-import { IsEmail } from 'class-validator';
-import { Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
-export class Parent {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+import { User } from 'src/common/entities/user.entity';
+import { Entity } from 'typeorm';
 
-  @Column()
-  firstName: string;
+@Entity()
+export class Parent extends User{
 
-  @Column()
-  lastName: string;
-
-  @Column()
-  dateOfBirth: string;
-
-  @Column({ unique: true })
-  email: string;
-
-  @Column()
-  password: string;
 }
