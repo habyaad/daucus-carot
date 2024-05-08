@@ -1,4 +1,5 @@
 import {
+  Equals,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -28,11 +29,11 @@ export class CreateParentDto {
   email: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber("NG")
+  @IsPhoneNumber('NG')
   phoneNumber: string;
 
   @IsNotEmpty()
-  @IsEnum(UserType)
+  @Equals(UserType.Parent)
   userType: UserType;
 
   @IsNotEmpty()
