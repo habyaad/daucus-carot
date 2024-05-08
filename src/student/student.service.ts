@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { StudentRepository } from './student.repository';
+import { Student } from './entities/student.entity';
 
 @Injectable()
 export class StudentService {
-  create(createStudentDto: CreateStudentDto) {
-    return 'This action adds a new student';
+  constructor(private readonly studentRepository: StudentRepository) {}
+  async fetchUserById(id: string): Promise<Student> {
+    return await this.studentRepository.findOneBy({ id });
+    ;
   }
 
   findAll() {
