@@ -104,7 +104,10 @@ export class AuthService {
       }
       user.activation.code =
         this.activationRepository.generateNewActivationCode();
-      user.save();
+
+      loginDto.userType === UserType.Parent
+        ? this.parentRepository.save(user)
+        : this.studentRepository.save(user);
       return user.activation;
     } catch (err) {
       throw err;
@@ -142,7 +145,9 @@ export class AuthService {
       }
       if (user.activation.isValid(code)) {
         user.activation.code = null;
-        user.save();
+        userType === UserType.Parent
+          ? this.parentRepository.save(user)
+          : this.studentRepository.save(user);
         return user;
       } else {
         throw new BadRequestException('Activation code error');
