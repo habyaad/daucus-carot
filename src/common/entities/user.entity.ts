@@ -1,20 +1,18 @@
 import {
   BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserType } from 'src/common/enums';
 import { Exclude } from 'class-transformer';
 import { Activation } from 'src/auth/entities/activation.entity';
+import { DateColumn } from './date-column';
 
-@Entity()
-export class User extends BaseEntity {
+export abstract class User extends BaseEntity{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -41,13 +39,9 @@ export class User extends BaseEntity {
   @Exclude()
   password: string;
 
-  @CreateDateColumn()
+  @Column(()=>DateColumn)
   @Exclude()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  @Exclude()
-  updatedAt: Date;
+  dates: DateColumn
 
   async validatePassword(checkPassword: string): Promise<boolean> {
     return await bcrypt.compare(checkPassword, this.password);
@@ -56,4 +50,5 @@ export class User extends BaseEntity {
     console.log(this.activation.code);
     return this.activation.code === null;
   }
+
 }
