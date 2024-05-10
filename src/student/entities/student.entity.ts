@@ -1,7 +1,8 @@
 import { User } from 'src/common/entities/user.entity';
 import { GenderType } from 'src/common/enums';
 import { Parent } from 'src/parent/entities/parent.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Task } from 'src/task/entities/task.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Student extends User{
@@ -18,4 +19,8 @@ export class Student extends User{
   @ManyToOne(()=>Parent, (parent)=>parent.children, {cascade: true})
   @JoinColumn()
   parent: Parent
+
+  @OneToMany(()=>Task, (task)=>task.assignedChild)
+  @JoinColumn()
+  tasks: Task[]
 }
