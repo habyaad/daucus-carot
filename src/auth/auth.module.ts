@@ -13,6 +13,7 @@ import { StudentModule } from 'src/student/student.module';
 @Module({
   controllers: [AuthController],
   imports: [
+    TypeOrmModule.forFeature([Activation]),
     forwardRef(() => ParentModule),
     StudentModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -21,7 +22,6 @@ import { StudentModule } from 'src/student/student.module';
       secret: ''+process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: parseInt(process.env.JWT_EXPIRES_IN) || 3600 },
     }),
-    TypeOrmModule.forFeature([Activation])
   ],
   providers: [ActivationRepository, AuthService, JwtStrategy, ],
   exports: [PassportModule, JwtStrategy, ActivationRepository],
