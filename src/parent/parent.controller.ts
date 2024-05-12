@@ -24,13 +24,19 @@ export class ParentController {
     return await this.parentService.fetch(parent.id);
   }
  
-  @Post('/register/child') 
+  @Post('/register/student') 
   @Roles('parent')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async registerChild(@GetUser() parent, @Body(ValidationPipe) createStudentDto: CreateStudentDto){
-    return await this.parentService.registerChild(createStudentDto, parent);
+  async registerStudent(@GetUser() parent, @Body(ValidationPipe) createStudentDto: CreateStudentDto){
+    return await this.parentService.registerStudent(createStudentDto, parent);
   }
 
+  @Get('/students') 
+  @Roles('parent')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async fetchStudents(@GetUser() parent){ 
+    return await this.parentService.fetchStudents(parent.id);
+  }
   // @Get(':id') 
   // findOne(@Param('id') id: string) {
   //   return this.parentService.findOne(+id);
