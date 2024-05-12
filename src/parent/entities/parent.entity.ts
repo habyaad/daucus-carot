@@ -17,6 +17,12 @@ export class Parent extends User{
     @Exclude()
     students: Student[]
 
-    @OneToMany(()=>Task, (task)=>task.parent)
+    @OneToMany(()=>Task, (task)=>task.parent, {eager: true})
+    @Exclude()
     createdTasks: Task[]
+
+    validateStudent(studentId:string): boolean{
+        return this.students.some((student: Student) => student.id === studentId);
+
+    }
 }
