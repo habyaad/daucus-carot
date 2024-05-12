@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { User } from 'src/common/entities/user.entity';
 import { GenderType } from 'src/common/enums';
 import { Parent } from 'src/parent/entities/parent.entity';
@@ -20,7 +21,7 @@ export class Student extends User{
   @JoinColumn()
   parent: Parent
 
-  @OneToMany(()=>Task, (task)=>task.assignedChild)
-  @JoinColumn()
+  @OneToMany(()=>Task, (task)=>task.assignedStudent, {eager: true})
+  @Exclude()
   tasks: Task[]
 }
