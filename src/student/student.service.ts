@@ -7,9 +7,8 @@ import { Student } from './entities/student.entity';
 @Injectable()
 export class StudentService {
   constructor(private readonly studentRepository: StudentRepository) {}
-  async fetchUserById(id: string): Promise<Student> {
+  async fetchStudentById(id: string): Promise<Student> {
     return await this.studentRepository.findOneBy({ id });
-    ;
   }
 
   findAll() {
