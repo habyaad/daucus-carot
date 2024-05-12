@@ -1,18 +1,19 @@
-export enum GenderType{
-    Male = 'male',
-    Female = 'female'
+export enum GenderType {
+  Male = 'male',
+  Female = 'female',
 }
-export enum UserType{
-    Parent = 'parent',
-    Student = 'student'
+export enum UserType {
+  Parent = 'parent',
+  Student = 'student',
 }
-export enum PostgresErrorCode{
-    UniqueColumnDuplicateErrorCode = 23505
+export enum PostgresErrorCode {
+  UniqueColumnDuplicateErrorCode = 23505,
 }
-export enum TaskStatus{
-    New = 'new',
-    Ongoing = 'ongoing',
-    Completed = 'completed',
-    Accepted = 'accepted',
-    Rejected = 'rejected'
+export enum TaskStatus {
+  New = 'new',
+  Ongoing = 'ongoing',
+  Completed = 'completed',
+  Accepted = 'accepted',
+  Rejected = 'rejected',
+  Expired = 'expired',
 }
