@@ -27,9 +27,9 @@ export class CreateStudentDto {
   @IsEnum(GenderType)
   gender: GenderType;
 
-  @IsNotEmpty()
-  @Equals(UserType.Student)
-  userType: UserType;
+  // @IsNotEmpty()
+  // @Equals(UserType.Student)
+  // userType: UserType;
 
   @IsAlphanumeric()
   @Length(3, 20)

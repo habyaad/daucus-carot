@@ -33,7 +33,7 @@ export class AuthService {
   ) {}
   logger: Logger = new Logger('Auth Module');
   async createParent(createParentDto: CreateParentDto) {
-    const { firstName, lastName, email, password, phoneNumber, userType } =
+    const { firstName, lastName, email, password, phoneNumber } =
       createParentDto;
 
     const activation: Activation = new Activation();
@@ -45,7 +45,7 @@ export class AuthService {
     parent.email = email;
     parent.password = await StringUtils.hashPassword(password);
     parent.phoneNumber = phoneNumber;
-    parent.userType = userType;
+    parent.userType = UserType.Parent;
     parent.activation = activation;
 
     try {

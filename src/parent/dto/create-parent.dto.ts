@@ -32,9 +32,9 @@ export class CreateParentDto {
   @IsPhoneNumber('NG')
   phoneNumber: string;
 
-  @IsNotEmpty()
-  @Equals(UserType.Parent)
-  userType: UserType;
+  // @IsNotEmpty()
+  // @Equals(UserType.Parent)
+  // userType: UserType;
 
   @IsNotEmpty()
   @IsStrongPassword()

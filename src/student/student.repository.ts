@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { Parent } from 'src/parent/entities/parent.entity';
-import { PostgresErrorCode } from 'src/common/enums';
+import { PostgresErrorCode, UserType } from 'src/common/enums';
 import { Activation } from 'src/auth/entities/activation.entity';
 import { ActivationRepository } from 'src/auth/activation.repository';
 import { StringUtils } from 'src/common/helpers/string.utils';
@@ -35,7 +35,6 @@ export class StudentRepository extends Repository<Student> {
       lastName,
       password,
       username,
-      userType,
       gender,
       dateOfBirth,
     } = createStudentDto;
@@ -48,7 +47,7 @@ export class StudentRepository extends Repository<Student> {
     student.lastName = lastName;
     student.password = await StringUtils.hashPassword(password);
     student.username = username;
-    student.userType = userType;
+    student.userType = UserType.Student;
     student.dateOfBirth = dateOfBirth;
     student.gender = gender;
     student.activation = activation;
