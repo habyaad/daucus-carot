@@ -17,11 +17,11 @@ export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Get() 
-  @Roles('parent')
+  @Roles('student')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async fetchParent(@GetUser() student): Promise<Student> {
     console.log(student);
-    return await this.studentService.fetchUserById(student.id);
+    return await this.studentService.fetchStudentById(student.id);
   }
 
   // @Get()
