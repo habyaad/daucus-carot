@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TaskService } from './task.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post, ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskService } from './task.service';
 
 @Controller('task')
+@ApiTags('tasks')
+@ApiBearerAuth()
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.create(createTaskDto);
+  create(@GetUser() user, @Body(ValidationPipe) createTaskDto: CreateTaskDto) {
+    return this.taskService.findAll();
   }
 
   @Get()
@@ -24,7 +28,7 @@ export class TaskController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(+id, updateTaskDto);
+    //return this.taskService.update(+id, updateTaskDto);
   }
 
   @Delete(':id')
