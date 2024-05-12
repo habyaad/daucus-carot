@@ -16,7 +16,7 @@ export class Student extends User{
   @Column({unique: true})
   username: string;
 
-  @ManyToOne(()=>Parent, (parent)=>parent.children, {cascade: true})
+  @ManyToOne(()=>Parent, (parent)=>parent.students, {cascade: true})
   @JoinColumn()
   parent: Parent
 
