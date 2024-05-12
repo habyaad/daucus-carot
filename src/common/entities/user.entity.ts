@@ -33,9 +33,6 @@ export abstract class User extends BaseEntity{
   activation: Activation;
 
   @Column()
-  activationId: number
-
-  @Column()
   @Exclude()
   password: string;
 
