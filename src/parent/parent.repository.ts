@@ -11,7 +11,7 @@ export class ParentRepository extends Repository<Parent> {
   logger: Logger = new Logger();
   constructor(
     @InjectRepository(Parent)
-    private parentRepository: Repository<Parent>,
+    private readonly parentRepository: ParentRepository,
   ) {
     super(
       parentRepository.target,
