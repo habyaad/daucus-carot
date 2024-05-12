@@ -1,59 +1,46 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateParentDto } from 'src/parent/dto/create-parent.dto';
-import { Parent } from 'src/parent/entities/parent.entity';
-import { LoginDto } from './dto/login-data.dto';
-import { JwtPayloadDto } from './dto/jwt-payload.dto';
-import { ParentRepository } from 'src/parent/parent.repository';
 import { JwtService } from '@nestjs/jwt';
-import { PostgresErrorCode, UserType } from 'src/common/enums';
-import { User } from 'src/common/entities/user.entity';
-import { ActivationRepository } from './activation.repository';
 import { InjectEntityManager } from '@nestjs/typeorm';
+import { User } from 'src/common/entities/user.entity';
+import { PostgresErrorCode, UserType } from 'src/common/enums';
+import { CreateParentDto } from 'src/parent/dto/create-parent.dto';
+import { ParentService } from 'src/parent/parent.service';
+import { StudentService } from 'src/student/student.service';
 import { EntityManager } from 'typeorm';
-import { Activation } from './entities/activation.entity';
+import { ActivationRepository } from './activation.repository';
 import { ActivationDto } from './dto/activate.dto';
-import { StringUtils } from 'src/common/helpers/string.utils';
-import { StudentRepository } from 'src/student/student.repository';
+import { JwtPayloadDto } from './dto/jwt-payload.dto';
+import { LoginDto } from './dto/login-data.dto';
+import { Activation } from './entities/activation.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly parentRepository: ParentRepository,
+    private readonly parentService: ParentService,
     private readonly activationRepository: ActivationRepository,
-    private readonly studentRepository: StudentRepository,
+    private readonly studentService: StudentService,
     private readonly jwtService: JwtService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
   logger: Logger = new Logger('Auth Module');
   async createParent(createParentDto: CreateParentDto) {
-    const { firstName, lastName, email, password, phoneNumber } =
-      createParentDto;
-
     const activation: Activation = new Activation();
     activation.code = this.activationRepository.generateNewActivationCode();
-
-    const parent: Parent = new Parent();
-    parent.firstName = firstName;
-    parent.lastName = lastName;
-    parent.email = email;
-    parent.password = await StringUtils.hashPassword(password);
-    parent.phoneNumber = phoneNumber;
-    parent.userType = UserType.Parent;
-    parent.activation = activation;
 
     try {
       // await this.entityManager.transaction(async (entityManager) => {
 
       //   // Optionally, you can perform more operations...
       // });
-      await this.parentRepository.save(parent);
+      await this.parentService.createParent(createParentDto, activation);
 
       return {
         message: 'account created successfully',
@@ -73,11 +60,13 @@ export class AuthService {
 
     const key: string = userType === UserType.Parent ? email : username;
     const user: User = await this.fetchUser(loginDto);
-    if (user.isActivated() === false) {
+    if (
+      user.isActivated() === false ||
+      (await user.validatePassword(password)) === false
+    ) {
       throw new NotFoundException('Incorrect details');
     }
     const payload: JwtPayloadDto = { key, userType };
-    user.activationId;
     return { access_token: await this.jwtService.signAsync(payload), user };
   }
 
@@ -86,9 +75,9 @@ export class AuthService {
     let user: User;
     try {
       if (userType === UserType.Parent) {
-        user = await this.parentRepository.findOneBy({ email: key });
+        user = await this.parentService.fetchByEmail(key);
       } else {
-        user = await this.studentRepository.findOneBy({ username: key });
+        user = await this.studentService.fetchStudentByUsername(key);
       }
       return user;
     } catch (error) {
@@ -105,9 +94,7 @@ export class AuthService {
       user.activation.code =
         this.activationRepository.generateNewActivationCode();
 
-      loginDto.userType === UserType.Parent
-        ? this.parentRepository.save(user)
-        : this.studentRepository.save(user);
+      await user.activation.save();
       return user.activation;
     } catch (err) {
       throw err;
@@ -120,9 +107,9 @@ export class AuthService {
     let user: User;
     try {
       if (userType === UserType.Parent) {
-        user = await this.parentRepository.findOneBy({ email });
+        user = await this.parentService.fetchByEmail(email);
       } else {
-        user = await this.studentRepository.findOneBy({ username });
+        user = await this.studentService.fetchStudentByUsername(username);
       }
       if (!user || (await user.validatePassword(password)) === false) {
         throw new NotFoundException('Incorrect details');
@@ -145,9 +132,8 @@ export class AuthService {
       }
       if (user.activation.isValid(code)) {
         user.activation.code = null;
-        userType === UserType.Parent
-          ? this.parentRepository.save(user)
-          : this.studentRepository.save(user);
+        await user.activation.save();
+
         return user;
       } else {
         throw new BadRequestException('Activation code error');

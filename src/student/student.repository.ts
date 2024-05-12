@@ -1,18 +1,17 @@
 import { Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { Parent } from 'src/parent/entities/parent.entity';
 import { PostgresErrorCode, UserType } from 'src/common/enums';
 import { Activation } from 'src/auth/entities/activation.entity';
 import { ActivationRepository } from 'src/auth/activation.repository';
 import { StringUtils } from 'src/common/helpers/string.utils';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class StudentRepository extends Repository<Student> {
@@ -20,7 +19,6 @@ export class StudentRepository extends Repository<Student> {
   constructor(
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
-    private activationRepository: ActivationRepository,
   ) {
     super(
       studentRepository.target,
@@ -40,7 +38,7 @@ export class StudentRepository extends Repository<Student> {
     } = createStudentDto;
 
     const activation: Activation = new Activation();
-    activation.code = this.activationRepository.generateNewActivationCode();
+    activation.code = StringUtils.generateActivationCode();
 
     const student: Student = new Student();
     student.firstName = firstName;

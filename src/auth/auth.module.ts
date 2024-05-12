@@ -19,11 +19,11 @@ import { StudentModule } from 'src/student/student.module';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       global: true,
-      secret: ''+process.env.JWT_SECRET_KEY,
+      secret: '' + process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: parseInt(process.env.JWT_EXPIRES_IN) || 3600 },
     }),
   ],
-  providers: [ActivationRepository, AuthService, JwtStrategy, ],
+  providers: [ActivationRepository, AuthService, JwtStrategy],
   exports: [PassportModule, JwtStrategy, ActivationRepository],
 })
 export class AuthModule {}
