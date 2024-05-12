@@ -19,11 +19,20 @@ export class ParentService {
   ) {}
 
   async fetch(id: string): Promise<Parent> {
-    return await this.parentRepository.findOneBy({ id });
+    try {
+      return await this.parentRepository.findOneBy({ id });
+    } catch (err) {
+      throw err;
+    }
   }
 
-  async registerChild(createStudentDto: CreateStudentDto, parent: Parent) {
+  async registerStudent(createStudentDto: CreateStudentDto, parent: Parent) {
     return await this.studentRepository.createStudent(createStudentDto, parent);
+  }
+
+  async fetchStudents(id:string): Promise<Student[]> {
+    const parent:Parent =  await this.fetch(id);
+    return parent.students;
   }
 
   findOne(id: number) {
