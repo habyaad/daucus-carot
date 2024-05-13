@@ -17,3 +17,7 @@ export enum TaskStatus {
   Rejected = 'rejected',
   Expired = 'expired',
 }
+export enum SubscriptionType {
+  Monthly = 'monthly',
+  Yearly = 'yearly',
+}
