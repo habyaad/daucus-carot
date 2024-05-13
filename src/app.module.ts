@@ -7,6 +7,8 @@ import { StudentModule } from './student/student.module';
 import { ParentModule } from './parent/parent.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
+import { SubscriptionPlanModule } from './subscription-plan/subscription-plan.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 import typeormConfig from './config/typeorm.config';
 
 @Module({
@@ -23,6 +25,8 @@ import typeormConfig from './config/typeorm.config';
     StudentModule,
     ParentModule,
     TaskModule,
+    SubscriptionPlanModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
