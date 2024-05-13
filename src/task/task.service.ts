@@ -110,6 +110,7 @@ export class TaskService {
   }
 
   async remove(id: number) {
+    const task:Task = await this.findOne(id);
     return await this.taskRepository.delete({ id });
   }
 
