@@ -9,6 +9,7 @@ import { ActivationRepository } from './activation.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Activation } from './entities/activation.entity';
 import { StudentModule } from 'src/student/student.module';
+import { AdminModule } from 'src/admin/admin.module';
 
 @Module({
   controllers: [AuthController],
@@ -16,6 +17,7 @@ import { StudentModule } from 'src/student/student.module';
     TypeOrmModule.forFeature([Activation]),
     forwardRef(() => ParentModule),
     StudentModule,
+    AdminModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       global: true,
