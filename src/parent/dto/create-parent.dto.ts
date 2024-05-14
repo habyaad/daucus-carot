@@ -1,15 +1,12 @@
 import {
-  Equals,
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsPhoneNumber,
   IsString,
   IsStrongPassword,
   MaxLength,
-  MinLength,
+  MinLength
 } from 'class-validator';
-import { UserType } from 'src/common/enums';
 
 export class CreateParentDto {
   @IsString()

@@ -1,9 +1,9 @@
 import { DateColumn } from "src/common/entities/date-column";
 import { SubscriptionType } from "src/common/enums";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class SubscriptionPlan {
+export class SubscriptionPlan extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
     @Column()
