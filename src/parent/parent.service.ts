@@ -20,6 +20,7 @@ import { Parent } from './entities/parent.entity';
 import { ParentRepository } from './parent.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateTaskDto } from 'src/task/dto/update-task.dto';
+import { Wallet } from 'src/wallet/entities/wallet.entity';
 
 @Injectable()
 export class ParentService {
@@ -30,7 +31,7 @@ export class ParentService {
     private readonly taskService: TaskService,
   ) {}
 
-  async createParent(createParentDto: CreateParentDto, activation: Activation) {
+  async createParent(createParentDto: CreateParentDto, activation: Activation, wallet: Wallet) {
     const { firstName, lastName, email, password, phoneNumber } =
       createParentDto;
 
@@ -42,6 +43,8 @@ export class ParentService {
     parent.phoneNumber = phoneNumber;
     parent.userType = UserType.Parent;
     parent.activation = activation;
+    parent.wallet = wallet;
+
 
     try {
       await this.parentRepository.save(parent);
@@ -63,7 +66,11 @@ export class ParentService {
   }
   async fetchByEmail(email: string): Promise<Parent> {
     try {
-      return await this.parentRepository.findOneBy({ email });
+      const parent: Parent = await this.parentRepository.findOneBy({ email });
+      if(!parent){
+        throw new NotFoundException();
+      }
+      return parent;
     } catch (err) {
       throw err;
     }
