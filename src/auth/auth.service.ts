@@ -20,6 +20,9 @@ import { ActivationDto } from './dto/activate.dto';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { LoginDto } from './dto/login-data.dto';
 import { Activation } from './entities/activation.entity';
+import { Wallet } from 'src/wallet/entities/wallet.entity';
+import { StringUtils } from 'src/common/helpers/string.utils';
+import { AdminService } from 'src/admin/admin.service';
 
 @Injectable()
 export class AuthService {
@@ -27,20 +30,25 @@ export class AuthService {
     private readonly parentService: ParentService,
     private readonly activationRepository: ActivationRepository,
     private readonly studentService: StudentService,
+    private readonly adminService: AdminService,
     private readonly jwtService: JwtService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
   logger: Logger = new Logger('Auth Module');
   async createParent(createParentDto: CreateParentDto) {
     const activation: Activation = new Activation();
-    activation.code = this.activationRepository.generateNewActivationCode();
-
+    activation.code = StringUtils.generateActivationCode();
+    const wallet: Wallet = new Wallet();
     try {
       // await this.entityManager.transaction(async (entityManager) => {
 
       //   // Optionally, you can perform more operations...
       // });
-      await this.parentService.createParent(createParentDto, activation);
+      await this.parentService.createParent(
+        createParentDto,
+        activation,
+        wallet,
+      );
 
       return {
         message: 'account created successfully',
@@ -58,7 +66,7 @@ export class AuthService {
   async signIn(loginDto: LoginDto) {
     const { email, password, userType, username } = loginDto;
 
-    const key: string = userType === UserType.Parent ? email : username;
+    const key: string = userType === UserType.Student ? username : email;
     const user: User = await this.fetchUser(loginDto);
     if (
       user.isActivated() === false ||
@@ -76,12 +84,14 @@ export class AuthService {
     try {
       if (userType === UserType.Parent) {
         user = await this.parentService.fetchByEmail(key);
-      } else {
+      } else if (userType === UserType.Student) {
         user = await this.studentService.fetchStudentByUsername(key);
+      } else {
+        user = await this.adminService.findOneByEmail(key);
       }
       return user;
     } catch (error) {
-      throw new UnauthorizedException();
+      throw error;
     }
   }
 
@@ -91,8 +101,7 @@ export class AuthService {
       if (user.activation.code === null) {
         throw new BadRequestException('Account has been activated before');
       }
-      user.activation.code =
-        this.activationRepository.generateNewActivationCode();
+      user.activation.code = StringUtils.generateActivationCode();
 
       await user.activation.save();
       return user.activation;
@@ -108,8 +117,10 @@ export class AuthService {
     try {
       if (userType === UserType.Parent) {
         user = await this.parentService.fetchByEmail(email);
-      } else {
+      } else if (userType === UserType.Student) {
         user = await this.studentService.fetchStudentByUsername(username);
+      } else {
+        user = await this.adminService.findOneByEmail(email);
       }
       if (!user || (await user.validatePassword(password)) === false) {
         throw new NotFoundException('Incorrect details');
@@ -123,7 +134,7 @@ export class AuthService {
 
   async activate(activationDto: ActivationDto): Promise<User> {
     const { email, code, userType, username } = activationDto;
-    const key: string = userType === UserType.Parent ? email : username;
+    const key: string = userType === UserType.Student ? username : email;
 
     try {
       const user: User = await this.validateUser({ key, userType });
