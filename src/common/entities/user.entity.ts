@@ -11,6 +11,8 @@ import { UserType } from 'src/common/enums';
 import { Exclude } from 'class-transformer';
 import { Activation } from 'src/auth/entities/activation.entity';
 import { DateColumn } from './date-column';
+import { Subscription } from 'src/subscription/entities/subscription.entity';
+import { Wallet } from 'src/wallet/entities/wallet.entity';
 
 export abstract class User extends BaseEntity{
   @PrimaryGeneratedColumn('uuid')
@@ -31,6 +33,18 @@ export abstract class User extends BaseEntity{
   @JoinColumn()
   @Exclude()
   activation: Activation;
+
+  @OneToOne(() => Subscription, {
+    cascade: true, eager:true
+  })
+  @JoinColumn()
+  subscription: Subscription;
+
+  @OneToOne(() => Wallet, {
+    cascade: true, eager:true
+  })
+  @JoinColumn()
+  wallet: Wallet;
 
   @Column()
   @Exclude()
