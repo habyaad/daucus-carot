@@ -5,6 +5,7 @@ export enum GenderType {
 export enum UserType {
   Parent = 'parent',
   Student = 'student',
+  Admin = 'admin',
 }
 export enum PostgresErrorCode {
   UniqueColumnDuplicateErrorCode = 23505,
