@@ -22,10 +22,10 @@ import { AdminModule } from 'src/admin/admin.module';
     JwtModule.register({
       global: true,
       secret: '' + process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: parseInt(process.env.JWT_EXPIRES_IN) || 3600 },
+      signOptions: { expiresIn: parseInt(process.env.JWT_EXPIRES_IN, 10) || 3600 },
     }),
   ],
   providers: [ActivationRepository, AuthService, JwtStrategy],
-  exports: [PassportModule, JwtStrategy, ActivationRepository],
+  exports: [PassportModule, /*JwtStrategy,*/ ActivationRepository],
 })
 export class AuthModule {}
