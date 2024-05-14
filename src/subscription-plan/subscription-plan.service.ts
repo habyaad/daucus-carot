@@ -12,9 +12,12 @@ export class SubscriptionPlanService {
   async create(
     createSubscriptionPlanDto: CreateSubscriptionPlanDto,
   ): Promise<SubscriptionPlan> {
-    return await this.subscriptionPlanRepository.create({
-      ...createSubscriptionPlanDto,
-    });
+    const subscriptionPlan: SubscriptionPlan =
+      this.subscriptionPlanRepository.create({
+        ...createSubscriptionPlanDto,
+      });
+    await subscriptionPlan.save();
+    return subscriptionPlan;
   }
 
   async findAll(): Promise<SubscriptionPlan[]> {
