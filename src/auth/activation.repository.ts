@@ -20,7 +20,5 @@ export class ActivationRepository extends Repository<Activation> {
         activationRepository.queryRunner,
     );
   }
-  generateNewActivationCode(): string{
-    return StringUtils.generateActivationCode();
-  }
+
 }
