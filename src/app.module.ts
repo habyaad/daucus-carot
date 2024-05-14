@@ -9,6 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
 import { SubscriptionPlanModule } from './subscription-plan/subscription-plan.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { WalletModule } from './wallet/wallet.module';
+import { AdminModule } from './admin/admin.module';
 import typeormConfig from './config/typeorm.config';
 
 @Module({
@@ -27,6 +29,8 @@ import typeormConfig from './config/typeorm.config';
     TaskModule,
     SubscriptionPlanModule,
     SubscriptionModule,
+    WalletModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
