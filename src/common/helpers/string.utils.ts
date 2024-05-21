@@ -1,8 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import { SubscriptionType } from '../enums';
 
-export class StringUtils{
-    static generateActivationCode(): string {
+export class StringUtils {
+  static generateActivationCode(): string {
     // Generate a random 6-digit number
     const otp = Math.floor(100000 + Math.random() * 900000);
     return otp.toString();
@@ -20,10 +20,14 @@ export class StringUtils{
   static calculateDueDate(planType: SubscriptionType): Date {
     const today: Date = new Date();
     if (planType === SubscriptionType.Monthly) {
-        today.setMonth(today.getMonth() + 1);
+      today.setMonth(today.getMonth() + 1);
     } else if (planType === SubscriptionType.Yearly) {
-        today.setFullYear(today.getFullYear() + 1);
+      today.setFullYear(today.getFullYear() + 1);
     }
     return today;
-}
+  }
+  static generateTransactionReference(): string {
+    // Generate a unique transaction reference, e.g., using a UUID or a custom scheme
+    return 'TXN-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+  }
 }
