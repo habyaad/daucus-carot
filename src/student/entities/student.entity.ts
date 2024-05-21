@@ -3,7 +3,7 @@ import { User } from 'src/common/entities/user.entity';
 import { GenderType } from 'src/common/enums';
 import { Parent } from 'src/parent/entities/parent.entity';
 import { Task } from 'src/task/entities/task.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Student extends User{
@@ -20,6 +20,9 @@ export class Student extends User{
   @ManyToOne(()=>Parent, (parent)=>parent.students, {cascade: true})
   @JoinColumn()
   parent: Parent
+
+  @Column()
+  parentId: string
 
   @OneToMany(()=>Task, (task)=>task.assignedStudent, {eager: true})
   @Exclude()
