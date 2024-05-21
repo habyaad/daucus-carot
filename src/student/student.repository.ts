@@ -1,14 +1,13 @@
-import { Repository } from 'typeorm';
-import { Student } from './entities/student.entity';
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { Parent } from 'src/parent/entities/parent.entity';
-import { PostgresErrorCode, UserType } from 'src/common/enums';
-import { Activation } from 'src/auth/entities/activation.entity';
-import { ActivationRepository } from 'src/auth/activation.repository';
-import { StringUtils } from 'src/common/helpers/string.utils';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Activation } from 'src/auth/entities/activation.entity';
+import { PostgresErrorCode, UserType } from 'src/common/enums';
+import { StringUtils } from 'src/common/helpers/string.utils';
+import { Parent } from 'src/parent/entities/parent.entity';
 import { Wallet } from 'src/wallet/entities/wallet.entity';
+import { Repository } from 'typeorm';
+import { CreateStudentDto } from './dto/create-student.dto';
+import { Student } from './entities/student.entity';
 
 @Injectable()
 export class StudentRepository extends Repository<Student> {
@@ -23,7 +22,6 @@ export class StudentRepository extends Repository<Student> {
       studentRepository.queryRunner,
     );
   }
-
   async createStudent(createStudentDto: CreateStudentDto, parent: Parent) {
     const { firstName, lastName, password, username, gender, dateOfBirth } =
       createStudentDto;
@@ -31,7 +29,6 @@ export class StudentRepository extends Repository<Student> {
     const activation: Activation = new Activation();
     activation.code = StringUtils.generateActivationCode();
     const wallet: Wallet = new Wallet();
-
     const student: Student = new Student();
     student.firstName = firstName;
     student.lastName = lastName;
@@ -43,6 +40,7 @@ export class StudentRepository extends Repository<Student> {
     student.activation = activation;
     student.parent = parent;
     student.wallet = wallet;
+    student.subscription = parent.subscription;
 
     try {
       await this.studentRepository.save(student);
