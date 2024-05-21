@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { DataSource } from "typeorm";
 
-// config();
+config();
 // export default new DataSource({
 //     type: 'postgres',
 //     host: process.env.DATABASE_HOST,
@@ -14,3 +14,10 @@ import { DataSource } from "typeorm";
 //     synchronize: false,
 //     migrationsTableName:'migrations_TypeORM',
 //     });
+    export const dataSource = new DataSource({
+        type: 'postgres',
+        host: process.env.DATABASE_HOST,
+        port: parseInt(process.env.DATABASE_PORT_NO, 10),
+        password: process.env.DATABASE_PASSWORD,
+        username: process.env.DATABASE_USER,
+    });

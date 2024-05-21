@@ -1,10 +1,12 @@
-import { NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { initializeTransactionalContext } from 'typeorm-transactional';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
+  initializeTransactionalContext();
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
