@@ -59,7 +59,11 @@ export class ParentService {
 
   async fetchById(id: string): Promise<Parent> {
     try {
-      return await this.parentRepository.findOneBy({ id });
+      const parent: Parent = await this.parentRepository.findOneBy({ id });
+      if(!parent){
+        throw new NotFoundException(`No parent with id:${id} found`)
+      }
+      return parent;
     } catch (err) {
       throw err;
     }
@@ -68,7 +72,7 @@ export class ParentService {
     try {
       const parent: Parent = await this.parentRepository.findOneBy({ email });
       if(!parent){
-        throw new NotFoundException();
+        throw new NotFoundException("Incorrect details");
       }
       return parent;
     } catch (err) {
