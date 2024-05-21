@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubscriptionPlanDto } from './dto/create-subscription-plan.dto';
 import { UpdateSubscriptionPlanDto } from './dto/update-subscription-plan.dto';
-import { SubscriptionPlanRepository } from './subscription.repository';
 import { SubscriptionPlan } from './entities/subscription-plan.entity';
+import { SubscriptionPlanRepository } from './subscription-plan.repository';
 
 @Injectable()
 export class SubscriptionPlanService {

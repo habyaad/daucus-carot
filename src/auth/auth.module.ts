@@ -10,11 +10,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Activation } from './entities/activation.entity';
 import { StudentModule } from 'src/student/student.module';
 import { AdminModule } from 'src/admin/admin.module';
+import { User } from 'src/common/entities/user.entity';
 
 @Module({
   controllers: [AuthController],
   imports: [
-    TypeOrmModule.forFeature([Activation]),
+    TypeOrmModule.forFeature([Activation, User]),
     forwardRef(() => ParentModule),
     StudentModule,
     AdminModule,

@@ -1,28 +1,26 @@
 import {
   BadRequestException,
   ConflictException,
-  Inject,
   Injectable,
   Logger,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectEntityManager } from '@nestjs/typeorm';
+import { AdminService } from 'src/admin/admin.service';
 import { User } from 'src/common/entities/user.entity';
 import { PostgresErrorCode, UserType } from 'src/common/enums';
+import { StringUtils } from 'src/common/helpers/string.utils';
 import { CreateParentDto } from 'src/parent/dto/create-parent.dto';
 import { ParentService } from 'src/parent/parent.service';
 import { StudentService } from 'src/student/student.service';
+import { Wallet } from 'src/wallet/entities/wallet.entity';
 import { EntityManager } from 'typeorm';
 import { ActivationRepository } from './activation.repository';
 import { ActivationDto } from './dto/activate.dto';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { LoginDto } from './dto/login-data.dto';
 import { Activation } from './entities/activation.entity';
-import { Wallet } from 'src/wallet/entities/wallet.entity';
-import { StringUtils } from 'src/common/helpers/string.utils';
-import { AdminService } from 'src/admin/admin.service';
 
 @Injectable()
 export class AuthService {
@@ -122,6 +120,7 @@ export class AuthService {
       } else {
         user = await this.adminService.findOneByEmail(email);
       }
+
       if (!user || (await user.validatePassword(password)) === false) {
         throw new NotFoundException('Incorrect details');
       }
