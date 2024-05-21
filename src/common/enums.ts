@@ -22,3 +22,17 @@ export enum SubscriptionType {
   Monthly = 'monthly',
   Yearly = 'yearly',
 }
+export enum TransactionType {
+  Credit = 'credit',
+  Debit = 'debit',
+}
+export enum TransactionCategory {
+  Funding = 'funding',
+  Subscription = 'subscription',
+  Transfer = 'transfer'
+}
+export enum TransactionStatus {
+  Success = 'success',
+  Pending = 'pending',
+  Failed = 'failed',
+}
