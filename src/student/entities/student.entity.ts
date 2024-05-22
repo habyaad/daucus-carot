@@ -6,25 +6,27 @@ import { Task } from 'src/task/entities/task.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
-export class Student extends User{
-  
+export class Student extends User {
   @Column()
   dateOfBirth: string;
 
   @Column({ type: 'enum', enum: GenderType })
   gender: GenderType;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   username: string;
 
-  @ManyToOne(()=>Parent, (parent)=>parent.students, {cascade: true})
+  @ManyToOne(() => Parent, (parent) => parent.students, {
+    cascade: true,
+    createForeignKeyConstraints: false,
+  })
   @JoinColumn()
-  parent: Parent
+  parent: Parent;
 
   @Column()
-  parentId: string
+  parentId: string;
 
-  @OneToMany(()=>Task, (task)=>task.assignedStudent, {eager: true})
+  @OneToMany(() => Task, (task) => task.assignedStudent, { eager: true })
   @Exclude()
-  tasks: Task[]
+  tasks: Task[];
 }
