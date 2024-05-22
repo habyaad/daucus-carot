@@ -1,8 +1,8 @@
 import { DateColumn } from 'src/common/entities/date-column';
 import { User } from 'src/common/entities/user.entity';
 import {
-  TaskStatus,
   TransactionCategory,
+  TransactionStatus,
   TransactionType,
 } from 'src/common/enums';
 import {
@@ -30,13 +30,12 @@ export class Transaction extends BaseEntity {
   reason: string;
   @Column()
   narration: string;
-  @Column({ enum: TaskStatus })
-  status: TaskStatus;
-  @Column(() => DateColumn)
-  dates: DateColumn;
+  @Column({ enum: TransactionStatus })
+  status: TransactionStatus;
 
-  @ManyToOne(() => User, user => user.transactions,{cascade:true})
+  @ManyToOne(() => User, (user) => user.transactions, { cascade: true })
   @JoinColumn()
   user: User;
-
+  @Column(() => DateColumn)
+  dates: DateColumn;
 }
