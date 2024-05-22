@@ -7,9 +7,10 @@ import { SubscriptionRepository } from './subscription.repository';
 import { SubscriptionPlanModule } from 'src/subscription-plan/subscription-plan.module';
 import { ParentModule } from 'src/parent/parent.module';
 import { WalletModule } from 'src/wallet/wallet.module';
+import { TransactionModule } from 'src/transaction/transaction.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Subscription]), SubscriptionPlanModule, ParentModule, WalletModule],
+  imports:[TypeOrmModule.forFeature([Subscription]), SubscriptionPlanModule, ParentModule, WalletModule, TransactionModule],
   controllers: [SubscriptionController],
   providers: [SubscriptionService, SubscriptionRepository],
 })
