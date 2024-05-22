@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { SubscriptionType } from '../enums';
+import { SubscriptionType, TransactionCategory } from '../enums';
 
 export class StringUtils {
   static generateActivationCode(): string {
@@ -29,5 +29,19 @@ export class StringUtils {
   static generateTransactionReference(): string {
     // Generate a unique transaction reference, e.g., using a UUID or a custom scheme
     return 'TXN-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+  }
+  static generateNarration(
+    type: TransactionCategory,
+    username: string,
+  ): string {
+    if (type === TransactionCategory.Funding) {
+      return `Funding account for ${username}`;
+    } else if (type === TransactionCategory.Subscription) {
+      return `Subscription of account for ${username}`;
+    } else if (type === TransactionCategory.Transfer) {
+      return `Transferred money to ${username}`;
+    } else {
+      return `Received money from ${username}`;
+    }
   }
 }
