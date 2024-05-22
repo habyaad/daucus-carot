@@ -3,20 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { SubscriptionRepository } from './subscription.repository';
-import { Subscription } from './entities/subscription.entity';
-import { SubscriptionPlanService } from 'src/subscription-plan/subscription-plan.service';
-import { SubscriptionPlan } from 'src/subscription-plan/entities/subscription-plan.entity';
 import { User } from 'src/common/entities/user.entity';
-import { SubscriptionType } from 'src/common/enums';
-import { ParentService } from 'src/parent/parent.service';
-import { Parent } from 'src/parent/entities/parent.entity';
-import { WalletService } from 'src/wallet/wallet.service';
-import { DataSource } from 'typeorm';
+import { TransactionCategory } from 'src/common/enums';
 import { StringUtils } from 'src/common/helpers/string.utils';
+import { Parent } from 'src/parent/entities/parent.entity';
+import { ParentService } from 'src/parent/parent.service';
+import { SubscriptionPlan } from 'src/subscription-plan/entities/subscription-plan.entity';
+import { SubscriptionPlanService } from 'src/subscription-plan/subscription-plan.service';
+import { TransactionService } from 'src/transaction/transaction.service';
+import { WalletService } from 'src/wallet/wallet.service';
 import { Transactional } from 'typeorm-transactional';
+import { Subscription } from './entities/subscription.entity';
+import { SubscriptionRepository } from './subscription.repository';
+import { Transaction } from 'src/transaction/entities/transaction.entity';
 
 @Injectable()
 export class SubscriptionService {
@@ -24,16 +23,20 @@ export class SubscriptionService {
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly parentService: ParentService,
     private readonly walletService: WalletService,
+    private readonly transactionService: TransactionService,
     private readonly subscriptionPlanService: SubscriptionPlanService,
-    private readonly dataSource: DataSource,
   ) {}
-  async create(user: User, plan: SubscriptionPlan): Promise<Subscription> {
+  async create(
+    user: User,
+    plan: SubscriptionPlan,
+    dueDate: Date,
+  ): Promise<Subscription> {
     const subscription: Subscription = new Subscription();
-    subscription.user = user;
     subscription.plan = plan;
-    subscription.dueDate = StringUtils.calculateDueDate(plan.type);
+    subscription.dueDate = dueDate;
 
-    await subscription.save();
+    user.subscription = subscription;
+    await user.save();
     return subscription;
   }
 
@@ -47,10 +50,12 @@ export class SubscriptionService {
 
   async findOneByUser(userId: string): Promise<Subscription> {
     const subscription: Subscription =
-      await this.subscriptionRepository.findOneBy({ userId });
+      await this.subscriptionRepository.findOne({
+        where: { user: { id: userId } },
+      });
 
-    if(!subscription){
-      throw new NotFoundException("No subscription for user");
+    if (!subscription) {
+      throw new NotFoundException('No subscription for user');
     }
     return subscription;
   }
@@ -59,45 +64,69 @@ export class SubscriptionService {
   async purchaseSubscription(
     userId: string,
     subscriptionPlanId: number,
-  ): Promise<Subscription> {
-    let subscription: Subscription =
-      await this.subscriptionRepository.findOneBy({ userId });
+  ): Promise<Transaction> {
+    let subscription: Subscription = await this.subscriptionRepository.findOne({
+      where: { user: { id: userId } },
+    });
     const parent: Parent = await this.parentService.fetchById(userId);
     const subscriptionPlan: SubscriptionPlan =
       await this.subscriptionPlanService.findOne(subscriptionPlanId);
+    const dueDate: Date = StringUtils.calculateDueDate(subscriptionPlan.type);
     if (subscription) {
       if (subscription.isActive() === true) {
         throw new BadRequestException('User has active subscription');
       } else {
-        await this.walletService.debitWallet(parent.wallet, subscriptionPlan.price);
+        await this.walletService.debitWallet(
+          parent.wallet,
+          subscriptionPlan.price,
+        );
 
-        subscription = await this.update(subscription, subscriptionPlan);
+        subscription = await this.update(
+          parent,
+          subscriptionPlan,
+          dueDate,
+        );
         if (parent.students.length > 0) {
           for (const student of parent.students) {
-            await this.update(student.subscription, subscriptionPlan);
+            await this.update(student, subscriptionPlan, dueDate);
           }
         }
       }
     } else {
-      await this.walletService.debitWallet(parent.wallet, subscriptionPlan.price);
+      await this.walletService.debitWallet(
+        parent.wallet,
+        subscriptionPlan.price,
+      );
 
-      subscription = await this.create(parent, subscriptionPlan);
+      subscription = await this.create(parent, subscriptionPlan, dueDate);
+      console.log(subscription);
       if (parent.students.length > 0) {
         for (const student of parent.students) {
-          await this.create(student, subscriptionPlan);
+          await this.create(student, subscriptionPlan, dueDate);
         }
       }
     }
-    return subscription;
+    const transaction: Transaction = await this.transactionService.create({
+      reference: StringUtils.generateTransactionReference(),
+      amount: subscriptionPlan.price,
+      category: TransactionCategory.Subscription,
+      narration: StringUtils.generateNarration(
+        TransactionCategory.Subscription,
+        parent.firstName,
+      ),
+      user: parent,
+    });
+    return transaction;
   }
   async update(
-    subscription: Subscription,
+    user: User,
     plan: SubscriptionPlan,
+    dueDate: Date,
   ): Promise<Subscription> {
-    subscription.plan = plan;
-    subscription.dueDate = StringUtils.calculateDueDate(plan.type);
-    await subscription.save();
-    return subscription;
+    user.subscription.plan = plan;
+    user.subscription.dueDate = dueDate;
+    await user.save();
+    return user.subscription;
   }
 
   remove(id: number) {
