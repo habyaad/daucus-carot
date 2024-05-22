@@ -42,6 +42,10 @@ export class WalletService {
 
   async creditWallet(wallet:Wallet, amount: number): Promise<Wallet> {
     //const wallet: Wallet = await this.findOneByUserID(userId);
+    if(amount<500){
+      throw new BadRequestException('Amount should be at least 500');
+
+    }
     wallet.balance += amount;
     await wallet.save();
     return wallet;
