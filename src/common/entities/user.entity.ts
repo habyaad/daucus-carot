@@ -38,14 +38,18 @@ export abstract class User extends BaseEntity {
   @Exclude()
   activation: Activation;
 
-  @OneToOne(() => Subscription, {
-    //cascade: true, eager:true
+  @OneToOne(() => Subscription, (subscription) => subscription.user, {
+    eager: true,
+    cascade: true,
+    createForeignKeyConstraints: false,
   })
   @Exclude()
+  @JoinColumn()
   subscription: Subscription;
 
   @OneToOne(() => Wallet, (wallet) => wallet.user, {
-    cascade: true, eager:true
+    cascade: true,
+    eager: true,
   })
   @JoinColumn()
   @Exclude()
