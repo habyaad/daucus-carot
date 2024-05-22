@@ -1,7 +1,6 @@
 import {
   BadRequestException,
-  Injectable,
-  NotFoundException,
+  Injectable
 } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
@@ -19,8 +18,14 @@ export class WalletService {
     return `This action returns all wallet`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wallet`;
+  async findOneByUser(id: string): Promise<Wallet> {
+    const wallet: Wallet = await this.walletRepository.findOne({
+      where: { user: { id: id } },
+    });
+    if (!wallet) {
+      throw new BadRequestException(`No wallet for user ID: ${id}`);
+    }
+    return wallet;
   }
   // async findOneByUserID(id: string): Promise<Wallet> {
   //   const wallet: Wallet = await this.walletRepository.findOneBy({
@@ -40,18 +45,17 @@ export class WalletService {
     return `This action removes a #${id} wallet`;
   }
 
-  async creditWallet(wallet:Wallet, amount: number): Promise<Wallet> {
+  async creditWallet(wallet: Wallet, amount: number): Promise<Wallet> {
     //const wallet: Wallet = await this.findOneByUserID(userId);
-    if(amount<500){
+    if (amount < 500) {
       throw new BadRequestException('Amount should be at least 500');
-
     }
     wallet.balance += amount;
     await wallet.save();
     return wallet;
   }
-  
-  async debitWallet(wallet:Wallet, amount: number): Promise<Wallet> {
+
+  async debitWallet(wallet: Wallet, amount: number): Promise<Wallet> {
     //const wallet: Wallet = await this.findOneByUserID(userId);
     if (amount > wallet.balance) {
       throw new BadRequestException('Insufficient funds');
