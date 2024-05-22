@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { DateColumn } from 'src/common/entities/date-column';
 import { User } from 'src/common/entities/user.entity';
 import { SubscriptionPlan } from 'src/subscription-plan/entities/subscription-plan.entity';
@@ -15,19 +16,15 @@ export class Subscription extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => SubscriptionPlan, {eager:true})
+  @OneToOne(() => SubscriptionPlan, {eager:true, createForeignKeyConstraints:false})
   @JoinColumn()
   plan: SubscriptionPlan;
 
   @Column()
   dueDate: Date;
 
-  @OneToOne(() => User, (user) => user.subscription, )
-  @JoinColumn()
+  @OneToOne(() => User, (user) => user.subscription)
   user: User;
-
-  @Column()
-  userId: string;
 
   @Column(() => DateColumn)
   dates: DateColumn;
