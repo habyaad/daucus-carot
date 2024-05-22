@@ -62,7 +62,7 @@ export class StudentService {
 
   async fetchTaskById(taskId: number, studentId: string): Promise<Task> {
     const task: Task = await this.taskService.findOne(taskId);
-    if (task.verifyStudentOwnwership(studentId) === true) {
+    if (task.verifyStudentOwnership(studentId) === true) {
       return task;
     } else {
       throw new NotFoundException();
@@ -72,7 +72,7 @@ export class StudentService {
     const task: Task = await this.taskService.findOne(taskId);
 
     if (
-      task.verifyStudentOwnwership(studentId) === true &&
+      task.verifyStudentOwnership(studentId) === true &&
       task.parentId === null
     ) {
       await this.taskService.remove(taskId);

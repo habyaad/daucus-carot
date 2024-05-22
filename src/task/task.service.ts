@@ -84,11 +84,11 @@ export class TaskService {
       const savedTask: Task = await this.findOne(id);
 
       if (userType === UserType.Parent) {
-        if (savedTask.verifyParentOwnwership(userId) === false) {
+        if (savedTask.verifyParentOwnership(userId) === false) {
           throw new NotFoundException();
         }
       } else {
-        if (savedTask.verifyStudentOwnwership(userId) === false) {
+        if (savedTask.verifyStudentOwnership(userId) === false) {
           throw new NotFoundException();
         }
         if (savedTask.parentId != null) {
@@ -131,7 +131,7 @@ export class TaskService {
   async markAsComplete(id: number, studentId: string): Promise<Task> {
     try {
       const savedTask: Task = await this.findOne(id);
-      if (savedTask.verifyStudentOwnwership(studentId) === false) {
+      if (savedTask.verifyStudentOwnership(studentId) === false) {
         throw new NotFoundException();
       }
       savedTask.completionDate = new Date();
@@ -146,7 +146,7 @@ export class TaskService {
   async verifyTaskCompletion(id: number, parentId: string, status: TaskStatus): Promise<Task> {
     try {
       const savedTask: Task = await this.findOne(id);
-      if (savedTask.verifyParentOwnwership(parentId) === false) {
+      if (savedTask.verifyParentOwnership(parentId) === false) {
         throw new NotFoundException();
       }
       savedTask.status = status;

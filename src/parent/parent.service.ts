@@ -105,7 +105,7 @@ export class ParentService {
 
   async fetchCreatedTaskById(taskId: number, parentId: string): Promise<Task> {
     const task: Task = await this.taskService.findOne(taskId);
-    if (task.verifyParentOwnwership(parentId) === true) {
+    if (task.verifyParentOwnership(parentId) === true) {
       return task;
     } else {
       throw new NotFoundException();
@@ -115,7 +115,7 @@ export class ParentService {
   async deleteCreatedTaskById(taskId: number, parentId: string) {
     const task: Task = await this.taskService.findOne(taskId);
 
-    if (task.verifyParentOwnwership(parentId) === true) {
+    if (task.verifyParentOwnership(parentId) === true) {
       await this.taskService.remove(taskId);
       return { message: `task ${taskId} deleted` };
     } else {

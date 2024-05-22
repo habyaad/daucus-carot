@@ -20,13 +20,13 @@ export class Task extends BaseEntity {
   @Column()
   description: string;
   @Column({ nullable: true })
-  reward: number;
+  reward?: number;
   @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.New })
   status: TaskStatus;
   @Column({ nullable: true })
-  remarks: string;
+  remarks?: string;
   @Column({ nullable: true })
-  completionDate: Date;
+  completionDate?: Date;
   @Column()
   dueDate: Date;
   @Column(() => DateColumn)
@@ -40,19 +40,19 @@ export class Task extends BaseEntity {
   assignedStudent: Student;
 
   @Column({ nullable: true })
-  parentId: string;
+  parentId?: string;
 
   @Exclude()
   @ManyToOne(() => Parent, (parent) => parent.createdTasks, { cascade: true })
   parent: Parent;
 
-  verifyParentOwnwership(parentId: string): boolean {
+  verifyParentOwnership(parentId: string): boolean {
     return this.parentId === parentId;
   }
-  verifyStudentOwnwership(studentId: string): boolean {
+  verifyStudentOwnership(studentId: string): boolean {
     return this.assignedStudentId === studentId;
   }
-  isDue(){
+  isDue() {
     const currentDate = new Date();
     return currentDate > this.dueDate;
   }
