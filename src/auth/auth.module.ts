@@ -11,7 +11,9 @@ import { Activation } from './entities/activation.entity';
 import { StudentModule } from 'src/student/student.module';
 import { AdminModule } from 'src/admin/admin.module';
 import { User } from 'src/common/entities/user.entity';
+import { config } from 'dotenv';
 
+config();
 @Module({
   controllers: [AuthController],
   imports: [
@@ -23,7 +25,7 @@ import { User } from 'src/common/entities/user.entity';
     JwtModule.register({
       global: true,
       secret: '' + process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: parseInt(process.env.JWT_EXPIRES_IN, 10) || 3600 },
+      signOptions: { expiresIn: parseInt(process.env.JWT_EXPIRES_IN, 10) },
     }),
   ],
   providers: [ActivationRepository, AuthService, JwtStrategy],
