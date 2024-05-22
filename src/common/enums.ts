@@ -29,7 +29,9 @@ export enum TransactionType {
 export enum TransactionCategory {
   Funding = 'funding',
   Subscription = 'subscription',
-  Transfer = 'transfer'
+  Transfer = 'transfer',
+  Receipt = 'receipt'
+
 }
 export enum TransactionStatus {
   Success = 'success',
